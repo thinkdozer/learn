@@ -129,7 +129,7 @@ class Weathertests(unittest.TestCase):
         weather = Weather(json.load(open("testdata/weather.json")))
         self.assertEqual(weather.get_obj(), json.load(open("testdata/weather.json")))
 
-    def test_weather_cur_json(self):
+    def test_weather_cur_obj(self):
         weather = Weather(json.load(open("testdata/weather.json")))
         self.assertEqual(weather.cur_weather_obj(), json.loads('{"time": "11:00", "temp": 7, "hum": 93, "wind": 7, "clouds": 100}'))
 
