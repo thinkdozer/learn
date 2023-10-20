@@ -38,9 +38,15 @@ class WeatherLoc:
         long = self.loc.get("longitude")
         url = f"https://www.agrar.basf.de/api/weather/weatherDetails?latitude={lat}&longitude={long}"
         req = requests.get(url).json()
-        return req
+        return Weather(req)
 
+class Weather:
 
+    def __init__(self, weather):
+        self.weather = weather
+
+    def get_json(self):
+        return self.weather
 
 
 
@@ -48,7 +54,7 @@ class Weathertests(unittest.TestCase):
 
     def test_search_han(self):
         search = WeatherLocSearch.search("Hannover")
-        file = json.load(open("Hannover.json"))
+        file = json.load(open("testdata/Hannover.json"))
         self.assertEqual(len(search.list), len(file))
         for i in search.list:
             thiszipcode = i.get("zipcode")
@@ -58,7 +64,7 @@ class Weathertests(unittest.TestCase):
 
     def test_search_ber(self):
         search = WeatherLocSearch.search("Berlin")
-        file = json.load(open("Berlin.json"))
+        file = json.load(open("testdata/Berlin.json"))
         self.assertEqual(len(search.list), len(file))
         for i in search.list:
             thiszipcode = i.get("zipcode")
@@ -67,23 +73,23 @@ class Weathertests(unittest.TestCase):
         return True
 
     def test_get_list(self):
-        weatherlist = WeatherLocList(json.load(open("Hannover.json")))
+        weatherlist = WeatherLocList(json.load(open("testdata/Hannover.json")))
         list = weatherlist.get_list()
-        self.assertEqual(weatherlist.get_list(), json.load(open("Hannover.json")))
+        self.assertEqual(weatherlist.get_list(), json.load(open("testdata/Hannover.json")))
 
     def test_choose_list_zero(self):
-        weatherlist = WeatherLocList(json.load(open("Berlin.json")))
+        weatherlist = WeatherLocList(json.load(open("testdata/Berlin.json")))
         loc = weatherlist.choose(0)
         s = '{"name": "Berlin", "zipcode": "12439", "latitude": 52.517778, "longitude": 13.405556, "region1": "Berlin", "region2": "Berlin"}'
         self.assertEqual(loc.get_loc(), json.loads(s))
 
     def test_choose_list_minus(self):
-        weatherlist = WeatherLocList(json.load(open("Berlin.json")))
+        weatherlist = WeatherLocList(json.load(open("testdata/Berlin.json")))
         loc = weatherlist.choose(-5)
         self.assertEqual(loc, None)
 
     def test_choose_list_to_big(self):
-        weatherlist = WeatherLocList(json.load(open("Berlin.json")))
+        weatherlist = WeatherLocList(json.load(open("testdata/Berlin.json")))
         loc = weatherlist.choose(50)
         self.assertEqual(loc, None)
 
@@ -92,21 +98,26 @@ class Weathertests(unittest.TestCase):
         self.assertEqual(location.loc, json.loads('{"name":"Berlin","zipcode":"12439","latitude":52.517778,"longitude":13.405556,"region1":"Berlin","region2":"Berlin"}'))
 
     def test_weatherloc_in2(self):
-        list = WeatherLocList(json.load(open("Berlin.json")))
+        list = WeatherLocList(json.load(open("testdata/Berlin.json")))
         location = list.choose(0)
         self.assertEqual(location.get_loc(), json.loads('{"name":"Berlin","zipcode":"12439","latitude":52.517778,"longitude":13.405556,"region1":"Berlin","region2":"Berlin"}'))
 
     def test_weatherloc_getweather(self):
         location = WeatherLoc(json.loads('{"name":"Berlin","zipcode":"12439","latitude":52.517778,"longitude":13.405556,"region1":"Berlin","region2":"Berlin"}'))
-        weather = location.get_weather()
+        weather = location.get_weather().get_json()
         self.assertTrue(weather.get("units"))
         self.assertTrue(weather.get("day1h"))
         self.assertTrue(weather.get("lastUpdated"))
         self.assertTrue(weather.get("days"))
         self.assertTrue(weather.get("days1h"))
 
+    def test_weather_in(self):
+        weather = Weather(json.load(open("testdata/weather.json")))
+        self.assertEqual(weather.get_json(), json.load(open("testdata/weather.json")))
+
+
 def main():
-    print(json.load(open("Hannover.json")))
+    print(json.load(open("testdata/Hannover.json")))
     print("-------------------------")
     WeatherLocSearch("Hannover")
 
