@@ -167,33 +167,13 @@ class Weathertests(unittest.TestCase):
     def test_weather_cur_sen(self):
         weather = Weather(json.load(open("testdata/weather.json")))
         self.assertEqual(weather.cur_weather_sen(), "Now it is 11:00 and the temperature is 7°C at a humidity of 93%. We have 7m/s wind and the clouds have 100%")
-def main():
-    print(json.load(open("testdata/Hannover.json")))
-    print("-------------------------")
-    WeatherLocSearch("Hannover")
 
-    print("input location")
-    # search_loc = input()
-    search_loc = "Hannover"
-    url = f"https://www.agrar.basf.de/api/geodata/getByAddress?address={search_loc}&countries=DE&maxresults=25&languages=DE&autocomplete=false"
-    website = requests.get(url)
-    loc_list = website.json()
-    # print(loc_list)
-    print("chose city: ")
-    sleep(1)
-    for i in range(len(loc_list)):
-        element = loc_list[i]
-        region = element.get("region1")
-        name = element.get("name")
-        zipcode = element.get("zipcode")
-        output = f"{i}. {region} {name} {zipcode}"
-        print(output)
-    loc_num = int(input())
-    if loc_num >= 0 and loc_num <= len(loc_list):
-        loc = loc_list[loc_num]
-    else:
-        print("wrong number")
-# main()
-
-weather = Weather(json.load(open("testdata/weather.json")))
-weather.cur_weather_obj()
+if __name__ == '__main__':
+    locationlist = WeatherLocSearch.search("Hamburg")
+    loc = locationlist.choose(1)
+    weather = loc.get_weather()
+    weatherobj = weather.cur_weather_obj()
+    temp = weatherobj.get("temp")
+    print(f"temp  = {temp}")
+    print(weather.cur_weather_sen())
+    print(weather.cur_weather_str())
