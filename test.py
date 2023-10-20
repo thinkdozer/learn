@@ -77,6 +77,19 @@ class Weather:
         s = f"time: {time}, temperature: {temp}{degree}, humidity: {hum}{percent}, wind: {wind}{meters}, clouds: {clouds}{percent}"
         return s
 
+    def cur_weather_sen(self):
+        wnow = self.weather.get("days1h")[0].get("1h")[0]
+        time = wnow.get("time")
+        temp = wnow.get("tair")
+        hum = wnow.get("relhum")
+        wind = wnow.get("wsms")
+        clouds = wnow.get("cloud")
+        degree = self.weather.get("units").get("degree")
+        percent = self.weather.get("units").get("percent")
+        meters = self.weather.get("units").get("m_s")
+        s = f"Now it is {time} and the temperature is {temp}{degree} at a humidity of {hum}{percent}. We have {wind}{meters} wind and the clouds have {clouds}{percent}"
+        return s
+
 
 class Weathertests(unittest.TestCase):
 
@@ -150,6 +163,10 @@ class Weathertests(unittest.TestCase):
     def test_weather_cur_str(self):
         weather = Weather(json.load(open("testdata/weather.json")))
         self.assertEqual(weather.cur_weather_str(), "time: 11:00, temperature: 7°C, humidity: 93%, wind: 7m/s, clouds: 100%")
+
+    def test_weather_cur_sen(self):
+        weather = Weather(json.load(open("testdata/weather.json")))
+        self.assertEqual(weather.cur_weather_sen(), "Now it is 11:00 and the temperature is 7°C at a humidity of 93%. We have 7m/s wind and the clouds have 100%")
 def main():
     print(json.load(open("testdata/Hannover.json")))
     print("-------------------------")
