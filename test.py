@@ -97,10 +97,10 @@ class Weather:
 class Weathertests(unittest.TestCase):
 
 
-    def test_search_none(self):
+    def test_weatherlocsearch_none(self):
         search = WeatherLocSearch.search("tlkdsjflakjdfl")
         self.assertIsNone(search)
-    def test_search_han(self):
+    def test_weatherlocsearch_han(self):
         search = WeatherLocSearch.search("Hannover")
         file = json.load(open("testdata/Hannover.json"))
         self.assertEqual(len(search.list), len(file))
@@ -110,7 +110,7 @@ class Weathertests(unittest.TestCase):
                 return False
         return True
 
-    def test_search_ber(self):
+    def test_weatherlocsearch_ber(self):
         search = WeatherLocSearch.search("Berlin")
         file = json.load(open("testdata/Berlin.json"))
         self.assertEqual(len(search.list), len(file))
@@ -120,23 +120,23 @@ class Weathertests(unittest.TestCase):
                 return False
         return True
 
-    def test_get_list(self):
+    def test_weatherloclist_getlist(self):
         weatherlist = WeatherLocList(json.load(open("testdata/Hannover.json")))
         list = weatherlist.get_obj()
         self.assertEqual(weatherlist.get_obj(), json.load(open("testdata/Hannover.json")))
 
-    def test_choose_list_zero(self):
+    def test_weatherloclist_choose(self):
         weatherlist = WeatherLocList(json.load(open("testdata/Berlin.json")))
         loc = weatherlist.choose(0)
         s = '{"name": "Berlin", "zipcode": "12439", "latitude": 52.517778, "longitude": 13.405556, "region1": "Berlin", "region2": "Berlin"}'
         self.assertEqual(loc.get_obj(), json.loads(s))
 
-    def test_choose_list_minus(self):
+    def test_weatherloclist_choose_minus(self):
         weatherlist = WeatherLocList(json.load(open("testdata/Berlin.json")))
         loc = weatherlist.choose(-5)
         self.assertEqual(loc, None)
 
-    def test_choose_list_to_big(self):
+    def test_weatherloclist_choose_toobig(self):
         weatherlist = WeatherLocList(json.load(open("testdata/Berlin.json")))
         loc = weatherlist.choose(50)
         self.assertEqual(loc, None)
