@@ -22,9 +22,26 @@ class WeatherLocList:
 
     def choose(self, number):
         if number in range(len(self.list)):
-            return self.list[number]
+            return WeatherLoc(self.list[number])
         else:
             return None
+class WeatherLoc:
+
+    def __init__(self, loc):
+        self.loc = loc
+
+    def get_loc(self):
+        return self.loc
+
+    def get_weather(self):
+        lat = self.loc.get("latitude")
+        long = self.loc.get("longitude")
+        url = f"https://www.agrar.basf.de/api/weather/weatherDetails?latitude={lat}&longitude={long}"
+        req = requests.get(url).json()
+        return req
+
+
+
 
 
 class Weathertests(unittest.TestCase):
@@ -58,7 +75,7 @@ class Weathertests(unittest.TestCase):
         weatherlist = WeatherLocList(json.load(open("Berlin.json")))
         loc = weatherlist.choose(0)
         s = '{"name": "Berlin", "zipcode": "12439", "latitude": 52.517778, "longitude": 13.405556, "region1": "Berlin", "region2": "Berlin"}'
-        self.assertEqual(loc, json.loads(s))
+        self.assertEqual(loc.get_loc(), json.loads(s))
 
     def test_choose_list_minus(self):
         weatherlist = WeatherLocList(json.load(open("Berlin.json")))
@@ -70,6 +87,23 @@ class Weathertests(unittest.TestCase):
         loc = weatherlist.choose(50)
         self.assertEqual(loc, None)
 
+    def test_weatherloc_in(self):
+        location = WeatherLoc(json.loads('{"name":"Berlin","zipcode":"12439","latitude":52.517778,"longitude":13.405556,"region1":"Berlin","region2":"Berlin"}'))
+        self.assertEqual(location.loc, json.loads('{"name":"Berlin","zipcode":"12439","latitude":52.517778,"longitude":13.405556,"region1":"Berlin","region2":"Berlin"}'))
+
+    def test_weatherloc_in2(self):
+        list = WeatherLocList(json.load(open("Berlin.json")))
+        location = list.choose(0)
+        self.assertEqual(location.get_loc(), json.loads('{"name":"Berlin","zipcode":"12439","latitude":52.517778,"longitude":13.405556,"region1":"Berlin","region2":"Berlin"}'))
+
+    def test_weatherloc_getweather(self):
+        location = WeatherLoc(json.loads('{"name":"Berlin","zipcode":"12439","latitude":52.517778,"longitude":13.405556,"region1":"Berlin","region2":"Berlin"}'))
+        weather = location.get_weather()
+        self.assertTrue(weather.get("units"))
+        self.assertTrue(weather.get("day1h"))
+        self.assertTrue(weather.get("lastUpdated"))
+        self.assertTrue(weather.get("days"))
+        self.assertTrue(weather.get("days1h"))
 
 def main():
     print(json.load(open("Hannover.json")))
