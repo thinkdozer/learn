@@ -8,7 +8,10 @@ class WeatherLocSearch:
     def search(search_loc):
         url = f"https://www.agrar.basf.de/api/geodata/getByAddress?address={search_loc}&countries=DE&maxresults=25&languages=DE&autocomplete=false"
         loc_list = requests.get(url).json()
-        return WeatherLocList(loc_list)
+        if len(loc_list) == 0:
+            return None
+        else:
+            return WeatherLocList(loc_list)
 
 
 class WeatherLocList:
@@ -93,6 +96,10 @@ class Weather:
 
 class Weathertests(unittest.TestCase):
 
+
+    def test_search_none(self):
+        search = WeatherLocSearch.search("tlkdsjflakjdfl")
+        self.assertIsNone(search)
     def test_search_han(self):
         search = WeatherLocSearch.search("Hannover")
         file = json.load(open("testdata/Hannover.json"))
