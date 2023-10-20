@@ -169,11 +169,23 @@ class Weathertests(unittest.TestCase):
         self.assertEqual(weather.cur_weather_sen(), "Now it is 11:00 and the temperature is 7°C at a humidity of 93%. We have 7m/s wind and the clouds have 100%")
 
 if __name__ == '__main__':
-    locationlist = WeatherLocSearch.search("Hamburg")
-    loc = locationlist.choose(1)
-    weather = loc.get_weather()
-    weatherobj = weather.cur_weather_obj()
-    temp = weatherobj.get("temp")
-    print(f"temp  = {temp}")
-    print(weather.cur_weather_sen())
-    print(weather.cur_weather_str())
+    print("input location for search")
+    locationlist = WeatherLocSearch.search(input())
+    obj = locationlist.get_obj()
+    print("choose city")
+    sleep(2)
+    for i in range(len(obj)):
+        name = obj[i].get("name")
+        zipcode = obj[i].get("zipcode")
+        print(f"{i}. {name} {zipcode}")
+    citynumber = int(input())
+    if citynumber in range(len(obj)):
+        loc = locationlist.choose(citynumber)
+        weather = loc.get_weather()
+        weatherobj = weather.cur_weather_obj()
+        temp = weatherobj.get("temp")
+        print(f"temp  = {temp}")
+        print(weather.cur_weather_sen())
+        print(weather.cur_weather_str())
+    else:
+        print(f"number out of range choose between 0 and {len(obj)}")
