@@ -178,6 +178,9 @@ class Weathertests(unittest.TestCase):
 if __name__ == '__main__':
     print("input location for search")
     locationlist = WeatherLocSearch.search(input())
+    if locationlist == None:
+        print("found no results")
+        exit(1)
     obj = locationlist.get_obj()
     print("choose city")
     sleep(2)
@@ -196,3 +199,4 @@ if __name__ == '__main__':
         print(weather.cur_weather_str())
     else:
         print(f"number out of range choose between 0 and {len(obj)}")
+        exit(1)
