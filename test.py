@@ -48,7 +48,21 @@ class Weather:
     def get_json(self):
         return self.weather
 
-
+    def cur_weather_obj(self):
+        wnow = self.weather.get("days1h")[0].get("1h")[0]
+        time = wnow.get("time")
+        temp = wnow.get("tair")
+        hum = wnow.get("relhum")
+        wind = wnow.get("wsms")
+        clouds = wnow.get("cloud")
+        obj = {
+            'time': time,
+            'temp': temp,
+            'hum': hum,
+            'wind': wind,
+            'clouds': clouds
+        }
+        return obj
 
 class Weathertests(unittest.TestCase):
 
@@ -115,6 +129,10 @@ class Weathertests(unittest.TestCase):
         weather = Weather(json.load(open("testdata/weather.json")))
         self.assertEqual(weather.get_json(), json.load(open("testdata/weather.json")))
 
+    def test_weather_cur_json(self):
+        weather = Weather(json.load(open("testdata/weather.json")))
+        self.assertEqual(weather.cur_weather_obj(), json.loads('{"time": "11:00", "temp": 7, "hum": 93, "wind": 7, "clouds": 100}'))
+
 
 def main():
     print(json.load(open("testdata/Hannover.json")))
@@ -143,3 +161,6 @@ def main():
     else:
         print("wrong number")
 # main()
+
+weather = Weather(json.load(open("testdata/weather.json")))
+weather.cur_weather_obj()
